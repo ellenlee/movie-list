@@ -25,7 +25,7 @@
     // console.dir(e)
     if(e.target.className =='btn btn-info save-local'){
       saveLocal(e.target.dataset.index)
-    }else if(e.target.className = 'btn btn-primary btn-show-movie'){
+    }else if(e.target.className == 'btn btn-primary btn-show-movie'){
       console.log(e.target.dataset.id)
       showMovie(e.target.dataset.id)
     }

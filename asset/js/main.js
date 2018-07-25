@@ -3,71 +3,115 @@
   const BASE_URL = 'http://localhost:3000'
   const INDEX_URL = BASE_URL + '/api/v1/movies/'
   const POSTER_URL = BASE_URL + '/posters/'
-  const dataSet = []
-  let showDataList = []
+  const data = []
+  // let showDataList = []
   const searchBtn =  document.getElementById('submit-search')
   const searchInput =document.getElementById('search')
-  let showData = document.getElementById('showData')
-  const paginateUl =document.getElementById('pagination')
+  const paginateUl = document.getElementById('pagination')
+
+
   axios.get(INDEX_URL).then((response)=>{
-    dataSet.push(...response.data.results)
-    console.dir(dataSet)
+    data.push(...response.data.results)
+    console.dir(data)
     // showDataList = dataSet.slice(0,10)
-    showDataList = paging(dataSet,1)
-    printMovieList()
-    renderPaginate()
+    // showDataList = paging(dataSet,1)
+    printDataList(data,createIndexCard)
+    // renderPaginate()
   }).catch((err)=> console.log(err)) 
   // })
 
   //add event listener ===>
-  // binding favorite list event
-  showData.addEventListener('click',(e)=>{
-    // console.dir(e)
-    if(e.target.className =='btn btn-info save-local'){
-      saveLocal(e.target.dataset.index)
-    }else if(e.target.className = 'btn btn-primary btn-show-movie'){
-      console.log(e.target.dataset.id)
-      showMovie(e.target.dataset.id)
-    }
-  })
-  searchBtn.addEventListener('click', e=>{
-    e.preventDefault()
-    // console.log(searchInput.value)
-    const regex = RegExp(searchInput.value,'gi')
-    showDataList = dataSet.filter(
-      // item=>item.title==searchInput.value
-      item =>{
-        return item.title.match(regex)
-      }
-    )
-    // array filter(match( regx))
-    printMovieList()
-  })
+  // // binding favorite list event
+  // showData.addEventListener('click',(e)=>{
+  //   // console.dir(e)
+  //   if(e.target.className =='btn btn-info save-local'){
+  //     saveLocal(e.target.dataset.index)
+  //   }else if(e.target.className = 'btn btn-primary btn-show-movie'){
+  //     console.log(e.target.dataset.id)
+  //     showMovie(e.target.dataset.id)
+  //   }
+  // })
+  // searchBtn.addEventListener('click', e=>{
+  //   e.preventDefault()
+  //   // console.log(searchInput.value)
+  //   const regex = RegExp(searchInput.value,'gi')
+  //   showDataList = dataSet.filter(
+  //     // item=>item.title==searchInput.value
+  //     item =>{
+  //       return item.title.match(regex)
+  //     }
+  //   )
+  //   // array filter(match( regx))
+  //   printMovieList()
+  // })
   paginateUl.addEventListener('click', e=>{
     // console.log(e.target.tagName)
     if(e.target.tagName == "A"){
-      console.log(e.target.dataset.page)
-      showDataList = paging(dataSet,e.target.dataset.page)
-      printMovieList()
+      // console.log(e.target.dataset.page)
+      // showDataList = paging(dataSet,e.target.dataset.page)
+      // printMovieList()
     }
   })
 
 
-  function printMovieList(){
-    let showContent =''
-    console.log('printMovieList')
-    console.log(showDataList)
-    if(showDataList.length>0){
-      console.log('printMovieList1')
-      showDataList.forEach((item,index)=>{
-        showContent += createCard(item,index)
-      })
+
+  function printDataList(dataList, callback){
+    if(dataList.length == 0) return 
+    const pages = Math.ceil(dataList.length / 10)
+    const paginateUl =document.getElementById('pagination')
+    const dataPanel = document.getElementById('data-panel')
+
+    // render paginate
+    let pagelist = ""
+    for( let i = 0; i<pages ; i++){
+      let content = `<li class="page-item"><a class="page-link" href="javascript:;" data-page="${i+1}">${i+1}</a></li>`
+      pagelist += content
     }
-    // console.log(showContent)
-    showData.innerHTML=showContent  
-    
+    paginateUl.innerHTML = pagelist
+
+    //print page 1
+    printPageList(1)
+
+    //add paginate click event
+    paginateUl.addEventListener('click', e=>{
+      // console.log(e.target.tagName)
+      if(e.target.tagName == "A"){
+        console.log(e.target.dataset.page)
+        printPageList(e.target.dataset.page)
+        // showDataList = paging(dataSet,e.target.dataset.page)
+        // printMovieList()
+      }
+    })
+    function printPageList(pageNum){
+      if(pageNum > pages) return 
+      pageList = dataList.slice((pageNum-1)*10,pageNum*10)
+      pageContent = ""
+      pageList.forEach((item,index)=>{
+        pageContent += callback(item,index)
+      })
+      dataPanel.innerHTML = pageContent
+    }
   }
-  function createCard(data,index){
+
+  // function printMovieList(dataList, page){
+  //   let showData = document.getElementById('showData')
+  //   renderPaginate(dataList)
+  //   let pageList = paging(dataList,page)
+  //   console.log('printMovieList')
+  //   console.log(pageList)
+  //   if(pageList.length>0){
+  //     console.log('printMovieList1')
+  //     let showContent =''
+  //     pageList.forEach((item,index)=>{
+  //       showContent += createCard(item,index)
+  //     })
+  //     showData.innerHTML=showContent  
+  //   }
+  //   // console.log(showContent)
+    
+    
+  // }
+  function createIndexCard(data,index){
     return `
       <div class="col-sm-3">
         <div class="card mb-2">
@@ -96,8 +140,9 @@
     localStorage.setItem('favoriteMovie',JSON.stringify(dataStorage))
   }
 
-  function renderPaginate(){
-    let pagesCount = Math.ceil(dataSet.length / 10)
+  function renderPaginate(dataList){
+    const paginateUl =document.getElementById('pagination')
+    let pagesCount = Math.ceil(dataList.length / 10)
     console.log("page "+pagesCount)
     let pagelist = ""
     for( let i = 0; i<pagesCount ; i++){

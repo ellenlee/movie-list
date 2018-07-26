@@ -33,7 +33,7 @@ function createFavoriteCard(data,index){
           <p class="card-text">${data.description}</p>
         </div>
         <div class="card-footer">
-          <a href="javascript:;" class="btn btn-primary">Go somewhere</a>
+          <button class="btn btn-primary btn-show-movie" data-toggle="modal" data-target="#show-movie-modal" data-id="${data.id}">More</button>
           <div class="btn btn-info btn-delete-local" data-id="${data.id}"  data-index="${index}" >X</div>
         </div>
       </div>

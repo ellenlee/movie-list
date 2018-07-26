@@ -69,28 +69,68 @@
     }
     paginateUl.innerHTML = pagelist
 
-    //print page 1
+    // print page 1
     printPageList(1)
 
-    //add paginate click event
+    // add paginate click event
     paginateUl.addEventListener('click', e=>{
-      // console.log(e.target.tagName)
       if(e.target.tagName == "A"){
-        console.log(e.target.dataset.page)
         printPageList(e.target.dataset.page)
-        // showDataList = paging(dataSet,e.target.dataset.page)
-        // printMovieList()
       }
     })
+
+    //add show Movie and favorite movie event listener
+    dataPanel.addEventListener('click',(e)=>{
+      if(e.target.matches('.btn-save-local')){
+        saveLocal(e.target.dataset.index)
+        // console.log(e.target)
+      }else if(e.target.matches('.btn-show-movie')){
+        // console.log(e.target)
+        showMovie(e.target.dataset.id)
+      }
+    })
+
     function printPageList(pageNum){
       if(pageNum > pages) return 
-      pageList = dataList.slice((pageNum-1)*10,pageNum*10)
+      const ITEM_PER_PAGE = 10
+      const offset = (pageNum-1)*ITEM_PER_PAGE
+      // pageList = dataList.slice((pageNum-1)*10,pageNum*10)
       pageContent = ""
-      pageList.forEach((item,index)=>{
-        pageContent += callback(item,index)
-      })
+      for(let i=offset; i<(ITEM_PER_PAGE+offset); i++){
+        pageContent += callback(dataList[i], i)
+      }
       dataPanel.innerHTML = pageContent
     }
+
+    function saveLocal(index){
+      if(!(index||index ===0)) return
+      const dataStorage = JSON.parse(localStorage.getItem('favoriteMovie'))||[]
+      const obj = dataList[index]
+      console.log(obj)
+      //console.dir(e.parentNode)
+      if(!dataStorage.some(item=> item.id == dataList[index].id)) dataStorage.push(obj)
+      console.log(dataStorage)
+      localStorage.setItem('favoriteMovie',JSON.stringify(dataStorage))
+    }
+    function showMovie(movieId){
+      const modalTitle = document.getElementById('show-movie-title')
+      const modalBody = document.getElementById('show-movie-body')
+      const modalImage = document.getElementById('show-movie-image')
+      const modalDate = document.getElementById('show-movie-date')
+      const modalDescription = document.getElementById('show-movie-description')
+      const url = INDEX_URL + movieId
+      console.log(url)
+      axios.get(url).then( response => {
+          const data = response.data.results
+          console.log(data)
+          modalTitle.textContent = data.title
+          modalImage.innerHTML = `<img src="${POSTER_URL}${data.image}" class="img-fluid" alt="Responsive image">`
+          modalDate.textContent = `release at : ${data.release_date}`
+          modalDescription.textContent = `${data.description}`
+    
+        })
+    }
+  
   }
 
   // function printMovieList(dataList, page){
@@ -129,16 +169,16 @@
     `
   }
 
-  function saveLocal(index){
-    if(!(index||index ===0)) return
-    const dataStorage = JSON.parse(localStorage.getItem('favoriteMovie'))||[]
-    const obj = showDataList[index]
-    console.log(obj)
-    //console.dir(e.parentNode)
-    if(!dataStorage.some(item=> item.id==showDataList[index].id)) dataStorage.push(obj)
-    // console.log(dataStorage)
-    localStorage.setItem('favoriteMovie',JSON.stringify(dataStorage))
-  }
+  // function saveLocal(index){
+  //   if(!(index||index ===0)) return
+  //   const dataStorage = JSON.parse(localStorage.getItem('favoriteMovie'))||[]
+  //   const obj = showDataList[index]
+  //   console.log(obj)
+  //   //console.dir(e.parentNode)
+  //   if(!dataStorage.some(item=> item.id==showDataList[index].id)) dataStorage.push(obj)
+  //   // console.log(dataStorage)
+  //   localStorage.setItem('favoriteMovie',JSON.stringify(dataStorage))
+  // }
 
   function renderPaginate(dataList){
     const paginateUl =document.getElementById('pagination')

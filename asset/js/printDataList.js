@@ -99,8 +99,3 @@ function printDataList(dataList, callback){
       })
   }
 }
-
-function searchTitle(dataList, title){
-  
-
-}

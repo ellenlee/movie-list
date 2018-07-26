@@ -14,7 +14,7 @@
     printDataList(data,createIndexCard)
   }).catch((err)=> console.log(err)) 
 
-
+  
 
   function createIndexCard(data,index){
     return `
@@ -33,4 +33,19 @@
       </div>
     `
   }
+
+  searchBtn.addEventListener('click', e=>{
+    let resultData
+    e.preventDefault()
+    // console.log(searchInput.value)
+    const regex = RegExp(searchInput.value,'gi')
+    resultData = data.filter(
+      // item=>item.title==searchInput.value
+      item =>{
+        return item.title.match(regex)
+      }
+    )
+    // array filter(match( regx))
+    printDataList(resultData,createIndexCard)
+  })
 })();

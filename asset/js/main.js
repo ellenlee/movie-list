@@ -13,43 +13,6 @@
     console.dir(data)
     printDataList(data,createIndexCard)
   }).catch((err)=> console.log(err)) 
-<<<<<<< HEAD
-  // })
-
-  //add event listener ===>
-  // binding favorite list event
-  showData.addEventListener('click',(e)=>{
-    // console.dir(e)
-    if(e.target.className =='btn btn-info save-local'){
-      saveLocal(e.target.dataset.index)
-    }else if(e.target.className == 'btn btn-primary btn-show-movie'){
-      console.log(e.target.dataset.id)
-      showMovie(e.target.dataset.id)
-    }
-  })
-  searchBtn.addEventListener('click', e=>{
-    e.preventDefault()
-    // console.log(searchInput.value)
-    const regex = RegExp(searchInput.value,'gi')
-    showDataList = dataSet.filter(
-      // item=>item.title==searchInput.value
-      item =>{
-        return item.title.match(regex)
-      }
-    )
-    // array filter(match( regx))
-    printMovieList()
-  })
-  paginateUl.addEventListener('click', e=>{
-    // console.log(e.target.tagName)
-    if(e.target.tagName == "A"){
-      console.log(e.target.dataset.page)
-      showDataList = paging(dataSet,e.target.dataset.page)
-      printMovieList()
-    }
-  })
-=======
->>>>>>> refector
 
   
 
